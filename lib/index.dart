@@ -99,10 +99,10 @@ class _HomepageState extends State<Homepage> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => NewTodoScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NewTodoScreen()));
                         },
                       ),
                     ),
