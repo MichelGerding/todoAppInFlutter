@@ -4,9 +4,9 @@ import '../models/todoModel.dart';
 
 import '../styles.dart';
 
+//ignore: must_be_immutable
 class Todo extends StatefulWidget {
   final TodoModel todo;
-  Widget _subtitle;
 
   final List<Widget> _checkbox = Checkboxes.primary;
   bool _checked = false;
@@ -26,18 +26,20 @@ class _TodoState extends State<Todo> {
         child: ListTile(
           onLongPress: () {
             showDialog(
-              // position: RelativeRect.fromLTRB(100, 100, 100, 100),
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                   title: Text(
                     "Todo setting",
                     style: TextStyles.titleCustom(
                         textColor: Color(0xfa000000),
                         fontWeight: FontWeight.w600),
                   ),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 26),
                   content: Text(
                     "Title: ${widget.todo.title}",
                     style: TextStyles.subTitleCustom(textColor: Colors.black),

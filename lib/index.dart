@@ -1,22 +1,52 @@
 //? Packages
 // import 'package:http/http.dart';
+import 'package:first_app/httpHandeler.dart';
 import 'package:flutter/material.dart';
-//? models
-import 'models/todoModel.dart';
+import 'dart:convert';
 //? widgets
 import 'widgets/todoWidget.dart';
 //? styles
 import 'styles.dart';
+//? models
+import 'models/todoModel.dart';
 
+//? pages
+import 'newTodo_screen.dart';
+
+//ignore: must_be_immutable
 class Homepage extends StatefulWidget {
-  final List todos;
-  Homepage({this.todos});
+  List<TodoModel> todos = [];
+  int id = 0;
 
   @override
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
+  @override
+  void initState() {
+    super.initState();
+    _getData(0);
+  }
+
+  void _getData(int uid) {
+    Future<String> jsonStrF = HttpHandler.fetchPost(uid);
+    jsonStrF.then((String jsonStr) {
+      List<dynamic> jsonO = json.decode(jsonStr);
+
+      List<TodoModel> todos = [];
+      for (var obj in jsonO) {
+        todos.add(TodoModel.fromJson(obj));
+      }
+      print(todos.runtimeType);
+      setState(() {
+        if (todos != null) {
+          this.widget.todos = todos;
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,6 +55,7 @@ class _HomepageState extends State<Homepage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
+              color: Colors.transparent,
               child: Stack(
                 children: [
                   ClipRRect(
@@ -42,6 +73,7 @@ class _HomepageState extends State<Homepage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
+                        color: Colors.transparent,
                         margin: EdgeInsets.only(top: 50),
                         child: Text(
                           "TODO",
@@ -67,7 +99,10 @@ class _HomepageState extends State<Homepage> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          print("");
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => NewTodoScreen()));
                         },
                       ),
                     ),
@@ -75,11 +110,16 @@ class _HomepageState extends State<Homepage> {
                 ],
               ),
             ),
-            Container(
-              height: MediaQuery.of(context).size.height - 240,
-              child: ListView.builder(
-                itemCount: this.widget.todos.length,
-                itemBuilder: _getPosts,
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: ListView.builder(
+                    itemCount: this.widget.todos.length,
+                    itemBuilder: _getPosts,
+                  ),
+                ),
               ),
             ),
           ],
@@ -90,5 +130,12 @@ class _HomepageState extends State<Homepage> {
 
   Widget _getPosts(BuildContext context, int index) {
     return Todo(todo: this.widget.todos[index]);
+  }
+
+  Future<Null> _onRefresh() async {
+    _getData(this.widget.id);
+    print("refresh");
+
+    return null;
   }
 }
