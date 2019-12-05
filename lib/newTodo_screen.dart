@@ -12,6 +12,6 @@ class NewTodoScreen extends StatefulWidget {
 class NewTodoScreenState extends State<NewTodoScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(appBar: AppBar(title: Text("Add new todo")));
   }
 }

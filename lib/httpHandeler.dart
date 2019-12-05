@@ -32,6 +32,7 @@ class HttpHandler {
       }
       return todos;
     });
+    print("failed to get posts");
   }
 
   static Future<TodoModel> updatePosts(

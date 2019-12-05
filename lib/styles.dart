@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomColors {
-  static Color background = Color(0xff211e1e);
+  static Color buttons1 = Color(0xffd6224f);
   static Color buttons2 = Color(0xffd6223d);
+  //! BackgroundColors
+  static Color backgroundPrimairy = Color(0xff211e1e);
+  static Color backgroundSecundairy = Color(0xffd9214f);
 }
 
 class Gradients {
@@ -16,35 +19,17 @@ class Gradients {
   );
 }
 
-class Buttons {
-  static Widget popupButton({Widget child, var callback}) {
-    return Container(
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30.0),
-        gradient: Gradients.buttonGradient,
-      ),
-      child: FlatButton(
-        shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0)),
-        child: child,
-        onPressed: callback(),
-      ),
-    );
-  }
-}
-
 class Checkboxes {
   static List<Icon> primary = <Icon>[
     Icon(
       Icons.check_box_outline_blank,
       size: 50,
-      color: CustomColors.buttons2,
+      color: Color(0xe5ffffff),
     ),
     Icon(
       Icons.check_box,
       size: 50,
-      color: CustomColors.buttons2,
+      color: Color(0xe5ffffff),
     ),
   ];
 }
