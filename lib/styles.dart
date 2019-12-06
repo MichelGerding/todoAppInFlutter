@@ -4,7 +4,7 @@ class CustomColors {
   static Color buttons1 = Color(0xffd6224f);
   static Color buttons2 = Color(0xffd6223d);
   //! BackgroundColors
-  static Color backgroundPrimairy = Color(0xff211e1e);
+  static Color backgroundPrimairy = Color(0xff121212);
   static Color backgroundSecundairy = Color(0xffd9214f);
 }
 

@@ -10,14 +10,12 @@ import 'styles.dart';
 //? models
 import 'models/todoModel.dart';
 
-//? pages
-import 'newTodo_screen.dart';
-
 //ignore: must_be_immutable
 class Homepage extends StatefulWidget {
+  Color _backgroundColor = CustomColors.backgroundPrimairy;
   List<TodoModel> todos = [];
   int uid = 0;
-
+//ignore: avoid_init_to_null
   Homepage({this.uid, List<TodoModel> todos = null}) {
     if (todos != null) {
       this.todos = todos;
@@ -29,13 +27,18 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  BorderRadius _borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(50), topRight: Radius.circular(50));
+
+  ScrollController _controller;
+
   @override
   void initState() {
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     super.initState();
-    if (this.widget.todos.length <= 0) {
-      _getData(this.widget.uid);
-    }
-    print(this.widget.todos.length);
+    _getData(this.widget.uid);
+    if (this.widget.todos.length > 0) {}
   }
 
   void _getData(int uid) {
@@ -48,6 +51,7 @@ class _HomepageState extends State<Homepage> {
         todos.add(TodoModel.fromJson(obj));
       }
       setState(() {
+        this.widget._backgroundColor = CustomColors.backgroundSecundairy;
         if (todos != null) {
           this.widget.todos = todos;
         }
@@ -71,8 +75,8 @@ class _HomepageState extends State<Homepage> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-                  child: Image.network(
-                    "https://images.pexels.com/photos/169573/pexels-photo-169573.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                  child: Image.asset(
+                    "assets/images/home/header.jpeg",
                     width: MediaQuery.of(context).size.width,
                   ),
                 ),
@@ -121,26 +125,31 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
           Expanded(
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
               margin: EdgeInsets.only(top: 40),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50),
-                ),
-                color: CustomColors.backgroundSecundairy,
+                borderRadius: _borderRadius,
+                color: this.widget._backgroundColor,
               ),
-              height: MediaQuery.of(context).size.height,
               child: RefreshIndicator(
                 onRefresh: _onRefresh,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
-                  ),
+                  borderRadius: _borderRadius,
                   child: MediaQuery.removePadding(
                     context: context,
-                    child: ListView.builder(
+                    child: ListView.separated(
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(
+                          color: Colors.white70,
+                          height: 0,
+                          thickness: 2,
+                          indent: 15,
+                          endIndent: 15,
+                        );
+                      },
+                      controller: _controller,
+                      padding: EdgeInsets.zero,
                       itemCount: this.widget.todos.length,
                       itemBuilder: _getPosts,
                     ),
@@ -154,9 +163,38 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  _scrollListener() {
+    setState(() {
+      if (_controller.offset >= _controller.position.maxScrollExtent &&
+          !_controller.position.outOfRange) {
+        _borderRadius = BorderRadius.all(Radius.circular(50));
+        print("bottom");
+      } else {
+        _borderRadius = BorderRadius.only(
+            topLeft: Radius.circular(50), topRight: Radius.circular(50));
+        print("top");
+      }
+    });
+  }
+
   Widget _getPosts(BuildContext context, int index) {
     // return Text("this is a fake todo");
-    return Todo(todo: this.widget.todos[index]);
+    return Todo(
+      index: index,
+      todo: this.widget.todos[index],
+      removeTodo: (int index) {
+        // HttpHandler.deletePost(
+        //     userId: this.widget.uid, postId: this.widget.todos[index].postId);
+        // _onRefresh();
+        print(this.widget.todos[index].postId);
+      },
+      undoTodo: (int index) {
+        HttpHandler.addPost(
+            userId: this.widget.uid, data: this.widget.todos[index].toJson());
+        _onRefresh();
+        print(index);
+      },
+    );
   }
 
   Future<Null> _onRefresh() async {

@@ -6,7 +6,9 @@ void main() {
   return runApp(
     MaterialApp(
       home: Container(
-        child: Homepage(uid: 0, todos: MockTodo.FetchMany()),
+        child: Homepage(
+          uid: 1,
+        ),
       ),
     ),
   );

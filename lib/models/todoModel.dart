@@ -2,10 +2,11 @@ class TodoModel {
   final String title;
   final DateTime deadlineDate;
   String date;
-  int postId;
+  final int postId;
   bool completed;
 
-  TodoModel({this.title, this.deadlineDate, postId = 0, completed = false}) {
+  TodoModel(
+      {this.title, this.deadlineDate, this.postId = 0, completed = false}) {
     this.date =
         "${this.deadlineDate.day}-${this.deadlineDate.month}-${this.deadlineDate.year}";
   }
@@ -14,7 +15,11 @@ class TodoModel {
     return TodoModel(
         title: json['title'],
         postId: json['postId'],
-        deadlineDate: DateTime.parse(json['date']),
+        deadlineDate: DateTime.parse(json['deadline']),
         completed: json['completed']);
+  }
+
+  String toJson() {
+    return '{"title": "${this.title}", "date": "${this.date}", "completed": "${this.completed}"}';
   }
 }
